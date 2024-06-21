@@ -21,18 +21,9 @@ import java.nio.file.Path;
         authors = {"Onako2"}
 )
 public class Redirect_players {
-    private Logger logger;
+    private final Logger logger;
     private ProxyServer server;
-    @DataDirectory
-    private Path dataDirectory;
-
-    public ProxyServer getServer() {
-        return this.server;
-    }
-
-    public Logger getLogger() {
-        return logger;
-    }
+    private final Path dataDirectory;
 
     @Inject
     public Redirect_players(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
@@ -40,14 +31,10 @@ public class Redirect_players {
         this.logger = logger;
         this.dataDirectory = dataDirectory;
         Config.dataDirectory = dataDirectory;
-
-        logger.info("Hello there! I made my first plugin with Velocity.");
+        Config.logger = logger;
     }
-
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-
-        this.server = server;
         Path configPath = dataDirectory.resolve("config.yml");
 
         logger.info(configPath.toString());
@@ -77,5 +64,6 @@ public class Redirect_players {
 
 
         server.getEventManager().register(this, new ListenerCloseListener(server));
+        logger.info("Redirect-players plugin loaded!");
     }
 }

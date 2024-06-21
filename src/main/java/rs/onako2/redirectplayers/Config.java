@@ -1,7 +1,5 @@
 package rs.onako2.redirectplayers;
 
-import com.google.inject.Inject;
-import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import org.slf4j.Logger;
 import org.yaml.snakeyaml.Yaml;
 
@@ -13,8 +11,7 @@ import java.util.Map;
 
 public class Config {
 
-    @Inject
-    private static Logger logger;
+    public static Logger logger;
     public static Path dataDirectory;
 
     static Yaml yaml = new Yaml();
@@ -22,8 +19,6 @@ public class Config {
     static InputStream inputStream = null;
 
     public static String getConfig(String input) {
-
-
         Path configPath = dataDirectory.resolve("config.yml");
 
         try {
