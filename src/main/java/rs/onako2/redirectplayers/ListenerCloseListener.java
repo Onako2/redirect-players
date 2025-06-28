@@ -21,21 +21,21 @@ public class ListenerCloseListener {
         this.logger = logger;
     }
 
-    @Subscribe(priority = Short.MAX_VALUE, async = false)
+    @Subscribe(priority = Short.MAX_VALUE)
     public void onListenerClose(ListenerCloseEvent event) {
         logger.info("Redirecting players to other server!");
         ProxyServer server = this.server;
         Collection<Player> players = server.getAllPlayers();
         final InetSocketAddress address = new InetSocketAddress(Objects.requireNonNull(Config.getConfig("host")), Integer.parseInt(Objects.requireNonNull(Config.getConfig("port"))));
-        boolean isGeyserInstalled = false;
+        boolean isGeyserInstalled;
         try {
             GeyserApi.api().platformType();
             isGeyserInstalled = true;
-        } catch (Exception e) {
-            // leaving empty
+        } catch (NoClassDefFoundError e) {
+            isGeyserInstalled = false;
         }
         for (Player player : players) {
-            if (isGeyserInstalled && !GeyserApi.api().isBedrockPlayer(player.getUniqueId())) {
+            if (!isGeyserInstalled || !GeyserApi.api().isBedrockPlayer(player.getUniqueId())) {
                 player.transferToHost(address);
             }
         }
