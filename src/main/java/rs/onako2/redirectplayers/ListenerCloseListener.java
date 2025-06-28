@@ -4,6 +4,8 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ListenerCloseEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import org.geysermc.geyser.api.GeyserApi;
+import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
 import java.util.Collection;
@@ -12,19 +14,30 @@ import java.util.Objects;
 public class ListenerCloseListener {
 
     private final ProxyServer server;
+    private final Logger logger;
 
-    public ListenerCloseListener(ProxyServer server) {
+    public ListenerCloseListener(ProxyServer server, Logger logger) {
         this.server = server;
+        this.logger = logger;
     }
 
-    @Subscribe
+    @Subscribe(priority = Short.MAX_VALUE, async = false)
     public void onListenerClose(ListenerCloseEvent event) {
+        logger.info("Redirecting players to other server!");
         ProxyServer server = this.server;
         Collection<Player> players = server.getAllPlayers();
-        InetSocketAddress address = new InetSocketAddress(Objects.requireNonNull(Config.getConfig("host")), Integer.parseInt(Objects.requireNonNull(Config.getConfig("port"))));
+        final InetSocketAddress address = new InetSocketAddress(Objects.requireNonNull(Config.getConfig("host")), Integer.parseInt(Objects.requireNonNull(Config.getConfig("port"))));
+        boolean isGeyserInstalled = false;
+        try {
+            GeyserApi.api().platformType();
+            isGeyserInstalled = true;
+        } catch (Exception e) {
+            // leaving empty
+        }
         for (Player player : players) {
-            player.transferToHost(address);
-            System.out.println("Redirecting player " + player.getUsername() + " to " + Config.getConfig("redirect-server"));
+            if (isGeyserInstalled && !GeyserApi.api().isBedrockPlayer(player.getUniqueId())) {
+                player.transferToHost(address);
+            }
         }
     }
 }

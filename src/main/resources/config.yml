@@ -1,3 +1,10 @@
 # The destination server hostname and port to connect to that must be reachable from the player (No localhost)
 host: example.com
 port: 25566
+
+# Bedrock Config (In case you are using Geyser)
+bedrock-host: bedrock.example.com
+bedrock-port: 19132
+
+# DO NOT CHANGE THIS. YOUR CONFIG MIGHT BREAK.
+version: 1
