@@ -104,7 +104,7 @@ public class RedirectPlayers {
         } catch (IOException e) {
             logger.error("Failed to read config.yml from {}", configPath, e);
         }
-        server.getEventManager().register(this, new ListenerCloseListener(server, logger));
+
         server.getEventManager().register(this, new ListenerPlayerJoin(logger));
 
         int pluginId = 26299;
